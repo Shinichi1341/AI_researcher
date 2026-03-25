@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-zinc-50 text-zinc-900 antialiased;
+  }
+}
+
+@layer components {
+  /* Comparison tables */
+  .article-content table {
+    @apply w-full border-collapse text-sm;
+  }
+
+  .article-content th,
+  .article-content td {
+    @apply border border-zinc-200 px-3 py-2 text-left;
+  }
+
+  .article-content th {
+    @apply bg-zinc-100 font-semibold;
+  }
+
+  .article-content tr:hover td {
+    @apply bg-blue-50/50;
+  }
+
+  /* Score bars rendered as Unicode blocks */
+  .article-content td:has(> text) {
+    font-family: monospace;
+  }
+
+  /* Affiliate link buttons */
+  .article-content a[href*="amazon"],
+  .article-content a[href*="rakuten"] {
+    @apply inline-block rounded bg-brand-500 px-4 py-2 text-sm font-medium text-white
+           no-underline transition hover:bg-brand-600;
+    margin-right: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  /* Details/summary for specs */
+  .article-content details {
+    @apply my-2 rounded border border-zinc-200;
+  }
+
+  .article-content summary {
+    @apply cursor-pointer bg-zinc-50 px-3 py-2 font-medium;
+  }
+
+  .article-content details[open] summary {
+    @apply border-b border-zinc-200;
+  }
+
+  .article-content details ul {
+    @apply px-6 py-2;
+  }
+}

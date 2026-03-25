@@ -1,0 +1,34 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ArticleCard from "../components/ArticleCard.astro";
+
+const articles = (await getCollection("articles")).sort(
+  (a, b) => b.data.updatedAt.getTime() - a.data.updatedAt.getTime()
+);
+---
+
+<BaseLayout title="トップページ" description="データで比較する、賢い買い物ガイド">
+  <section class="mb-10">
+    <h1 class="text-2xl font-bold text-zinc-900">最新の比較記事</h1>
+    <p class="mt-2 text-sm text-zinc-600">
+      商品スペック・価格・レビューをデータで徹底比較。独自のスコアリングで最適な一品を見つけましょう。
+    </p>
+  </section>
+
+  {articles.length === 0 && (
+    <p class="text-zinc-500 text-center py-16">記事はまだありません。パイプライン実行後に表示されます。</p>
+  )}
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    {articles.map((article) => (
+      <ArticleCard
+        title={article.data.title}
+        description={article.data.description}
+        slug={article.data.slug}
+        keyword={article.data.keyword}
+        updatedAt={article.data.updatedAt}
+      />
+    ))}
+  </div>
+</BaseLayout>
