@@ -3,7 +3,7 @@ import tailwind from "@astrojs/tailwind";
 
 export default defineConfig({
   site: "https://shinichi1341.github.io",
-  base: "/AI_researcher/",
+  base: "/Drunken_Logic/",
   integrations: [tailwind()],
   markdown: {
     shikiConfig: { theme: "github-dark" },
