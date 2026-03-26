@@ -1,0 +1,38 @@
+---
+export interface Props {
+  author: "human" | "ai" | "hybrid";
+}
+
+const { author } = Astro.props;
+
+const config: Record<string, { icon: string; label: string; desc: string; gradient: string }> = {
+  human: {
+    icon: "🥃",
+    label: "主観レビュー",
+    desc: "筆者が実際に飲んだ体験に基づく正直なレビューです。",
+    gradient: "from-amber-500/10 to-orange-500/10 border-amber-500/20",
+  },
+  ai: {
+    icon: "🤖",
+    label: "AI 客観データ",
+    desc: "AI が収集・分析した客観的データに基づく記事です。",
+    gradient: "from-blue-500/10 to-cyan-500/10 border-blue-500/20",
+  },
+  hybrid: {
+    icon: "🥃✕🤖",
+    label: "Drunken Logic",
+    desc: "筆者の主観レビューと AI の客観データを融合した Drunken Logic 専用記事です。",
+    gradient: "from-amber-500/10 via-purple-500/5 to-blue-500/10 border-amber-500/20",
+  },
+};
+
+const c = config[author] ?? config.ai;
+---
+
+<div class={`flex items-start gap-4 rounded-2xl border bg-gradient-to-r ${c.gradient} p-4 my-6`}>
+  <span class="text-2xl flex-shrink-0 mt-0.5">{c.icon}</span>
+  <div>
+    <p class="text-sm font-semibold text-white">{c.label}</p>
+    <p class="text-xs text-zinc-400 mt-0.5 leading-relaxed">{c.desc}</p>
+  </div>
+</div>

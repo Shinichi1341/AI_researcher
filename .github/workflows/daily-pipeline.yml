@@ -49,6 +49,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add affiliate-engine/site/src/content/articles/ affiliate-engine/site/public/ogp/ affiliate-engine/data/
+          git add affiliate-engine/site/src/content/blog/ affiliate-engine/site/public/ogp/ affiliate-engine/data/
           git diff --cached --quiet || git commit -m "chore: auto-generate daily content [$(date +%Y-%m-%d)]"
           git push

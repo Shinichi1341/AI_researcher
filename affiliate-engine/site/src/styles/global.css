@@ -4,27 +4,36 @@
 
 @layer base {
   body {
-    @apply bg-zinc-50 text-zinc-900 antialiased;
+    @apply bg-zinc-950 text-zinc-100 antialiased;
+    font-family: "Inter", "Noto Serif JP", sans-serif;
+  }
+
+  ::selection {
+    @apply bg-amber-500/30 text-white;
   }
 }
 
 @layer components {
-  /* ── Comparison tables ── */
+  /* ── Comparison tables (dark theme) ── */
   .article-content table {
-    @apply w-full border-collapse text-sm my-6;
+    @apply w-full border-collapse text-sm my-6 rounded-xl overflow-hidden;
   }
 
   .article-content th,
   .article-content td {
-    @apply border border-zinc-200 px-3 py-2.5 text-left;
+    @apply border border-zinc-800 px-4 py-3 text-left;
   }
 
   .article-content th {
-    @apply bg-zinc-100 font-semibold text-zinc-700;
+    @apply bg-zinc-800/50 font-semibold text-zinc-300 text-xs uppercase tracking-wider;
+  }
+
+  .article-content td {
+    @apply text-zinc-300;
   }
 
   .article-content tr:hover td {
-    @apply bg-amber-50/40;
+    @apply bg-amber-500/5;
   }
 
   /* ── Score bars rendered as Unicode blocks ── */
@@ -32,47 +41,35 @@
     font-family: monospace;
   }
 
-  /* ── Affiliate link buttons ── */
-  .article-content a[href*="amazon"],
-  .article-content a[href*="rakuten"] {
-    @apply inline-block rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white
-           no-underline transition-all hover:bg-amber-600 hover:shadow-md;
-    margin-right: 0.5rem;
-    margin-top: 0.5rem;
-  }
-
   /* ── Details/summary for specs ── */
   .article-content details {
-    @apply my-2 rounded-lg border border-zinc-200;
+    @apply my-2 rounded-xl border border-zinc-800 bg-zinc-900/50;
   }
 
   .article-content summary {
-    @apply cursor-pointer bg-zinc-50 px-3 py-2 font-medium;
+    @apply cursor-pointer px-4 py-3 font-medium text-zinc-300 hover:text-amber-400 transition-colors;
   }
 
   .article-content details[open] summary {
-    @apply border-b border-zinc-200;
+    @apply border-b border-zinc-800;
   }
 
   .article-content details ul {
-    @apply px-6 py-2;
+    @apply px-6 py-3;
   }
 
-  /* ── AI Objective Data sections: card style ── */
-  .article-content h2#基本データ + *,
-  .article-content h2#基本データ ~ table,
-  .article-content .ai-data-section {
-    /* Tables in 基本データ section get a card wrapper via their container */
-  }
-
-  /* Wrap AI sections (基本データ, 一般的な評価, おすすめの合わせ方) in card style */
+  /* ── Headings ── */
   .article-content h2 {
-    @apply text-xl font-bold text-zinc-900 mt-10 mb-4 pb-2 border-b border-zinc-200;
+    @apply text-xl font-bold text-white mt-12 mb-4 pb-3 border-b border-zinc-800;
+  }
+
+  .article-content h3 {
+    @apply text-lg font-semibold text-zinc-200 mt-8 mb-3;
   }
 
   /* ── Human review section: warm handwritten-feel ── */
   .article-content .review-voice {
-    @apply bg-amber-50 border-l-4 border-amber-400 rounded-r-xl p-6 my-8 text-zinc-800;
+    @apply bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20 rounded-2xl p-6 my-8 text-zinc-200;
   }
 
   .article-content .review-voice p {
@@ -81,21 +78,45 @@
 
   /* ── Blockquotes (buying guide) ── */
   .article-content blockquote {
-    @apply border-l-4 border-brand-500 bg-brand-50 rounded-r-xl pl-5 pr-4 py-4 my-6
-           text-sm text-zinc-700 italic;
+    @apply border-l-4 border-amber-500/50 bg-zinc-900/50 rounded-r-xl pl-5 pr-4 py-4 my-6
+           text-sm text-zinc-400 italic;
   }
 
   /* ── Lists ── */
   .article-content ul {
-    @apply my-4 space-y-1;
+    @apply my-4 space-y-1.5;
   }
 
   .article-content ul li {
-    @apply pl-1;
+    @apply pl-1 text-zinc-300;
   }
 
   /* ── Horizontal rules ── */
   .article-content hr {
-    @apply my-8 border-zinc-200;
+    @apply my-10 border-zinc-800;
+  }
+
+  /* ── Links ── */
+  .article-content a {
+    @apply text-amber-400 underline decoration-amber-500/30 underline-offset-2
+           hover:decoration-amber-500 transition-colors;
+  }
+
+  /* ── Paragraphs ── */
+  .article-content p {
+    @apply text-zinc-300 leading-relaxed my-4;
+  }
+
+  /* ── Code blocks ── */
+  .article-content pre {
+    @apply rounded-xl border border-zinc-800 my-6;
+  }
+
+  .article-content code {
+    @apply text-amber-300 bg-zinc-800/50 px-1.5 py-0.5 rounded text-sm;
+  }
+
+  .article-content pre code {
+    @apply bg-transparent px-0 py-0;
   }
 }

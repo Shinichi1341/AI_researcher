@@ -3,45 +3,95 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ArticleCard from "../components/ArticleCard.astro";
 
-const articles = (await getCollection("articles")).sort(
+const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.updatedAt.getTime() - a.data.updatedAt.getTime()
 );
+
+const reviews = posts.filter((p) => p.data.articleType === "review");
+const latest = posts.slice(0, 6);
 ---
 
-<BaseLayout title="トップページ" description="正直レビューとデータ比較で、賢い酒選びをサポート">
-  <!-- Hero -->
-  <section class="mb-12 text-center py-10">
-    <h1 class="text-4xl sm:text-5xl font-bold text-zinc-900 tracking-tight">
-      🥃 Drunken Logic
-    </h1>
-    <p class="mt-4 text-lg text-zinc-500 max-w-xl mx-auto">
-      飲んで、感じて、データで語る。<br class="sm:hidden" />
-      正直レビュー × AI客観データ。
-    </p>
+<BaseLayout title="トップページ" description="飲んで、感じて、データで語る。正直レビュー × AI客観データ。">
+  {/* ── Hero ── */}
+  <section class="relative mb-16 text-center py-20 overflow-hidden">
+    {/* Decorative ambient blobs */}
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+    <div class="absolute top-0 right-0 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl pointer-events-none" />
+
+    <div class="relative">
+      <p class="text-amber-400 text-sm font-medium tracking-widest uppercase mb-4">
+        Real Reviews × AI Data
+      </p>
+      <h1 class="text-5xl sm:text-6xl md:text-7xl font-bold text-white tracking-tight font-display">
+        Drunken Logic
+      </h1>
+      <p class="mt-6 text-lg sm:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+        飲んで、感じて、データで語る。<br />
+        主観レビュー × AI客観データの融合。
+      </p>
+      <div class="mt-8 flex items-center justify-center gap-4">
+        <a
+          href="/blog"
+          class="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-6 py-3 text-sm font-semibold text-zinc-950 no-underline transition-all hover:bg-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
+        >
+          記事を読む →
+        </a>
+      </div>
+    </div>
   </section>
 
-  <!-- Articles -->
-  <section>
-    <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-6">
-      Latest Reviews
-    </h2>
+  {/* ── Feature Pillars ── */}
+  <section class="mb-16 grid gap-4 sm:grid-cols-3">
+    <div class="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 text-center">
+      <span class="text-3xl mb-3 block">🥃</span>
+      <h3 class="text-sm font-bold text-white">主観レビュー</h3>
+      <p class="mt-1 text-xs text-zinc-500">実際に飲んだ正直な感想</p>
+    </div>
+    <div class="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 text-center">
+      <span class="text-3xl mb-3 block">🤖</span>
+      <h3 class="text-sm font-bold text-white">AI 客観データ</h3>
+      <p class="mt-1 text-xs text-zinc-500">Gemini 生成の分析レポート</p>
+    </div>
+    <div class="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 text-center">
+      <span class="text-3xl mb-3 block">📊</span>
+      <h3 class="text-sm font-bold text-white">トレンド検索</h3>
+      <p class="mt-1 text-xs text-zinc-500">楽天 API リアルタイム比較</p>
+    </div>
+  </section>
 
-    {articles.length === 0 && (
-      <p class="text-zinc-400 text-center py-16">
-        記事はまだありません。パイプライン実行後に表示されます。
-      </p>
+  {/* ── Latest Articles ── */}
+  <section>
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h2 class="text-xs font-semibold text-amber-400 uppercase tracking-widest mb-1">
+          Latest
+        </h2>
+        <p class="text-xl font-bold text-white">最新の記事</p>
+      </div>
+      <a href="/blog" class="text-sm text-zinc-500 hover:text-amber-400 transition-colors no-underline">
+        すべて見る →
+      </a>
+    </div>
+
+    {latest.length === 0 && (
+      <div class="text-center py-20 rounded-2xl border border-dashed border-zinc-800">
+        <p class="text-zinc-600">記事はまだありません。</p>
+        <p class="text-zinc-700 text-xs mt-1">パイプライン実行後に表示されます。</p>
+      </div>
     )}
 
     <div class="grid gap-6 sm:grid-cols-2">
-      {articles.map((article) => (
+      {latest.map((post) => (
         <ArticleCard
-          title={article.data.title}
-          description={article.data.description}
-          slug={article.data.urlSlug}
-          keyword={article.data.keyword}
-          articleType={article.data.articleType}
-          updatedAt={article.data.updatedAt}
-          rating={article.data.rating}
+          title={post.data.title}
+          description={post.data.description}
+          slug={post.data.urlSlug}
+          keyword={post.data.keyword}
+          articleType={post.data.articleType}
+          updatedAt={post.data.updatedAt}
+          rating={post.data.rating}
+          author={post.data.author}
+          tags={post.data.tags}
         />
       ))}
     </div>

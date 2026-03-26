@@ -1,0 +1,54 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ArticleCard from "../../components/ArticleCard.astro";
+
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.updatedAt.getTime() - a.data.updatedAt.getTime()
+);
+
+const categories = [...new Set(posts.map((p) => p.data.category).filter(Boolean))];
+---
+
+<BaseLayout title="Blog" description="レビュー記事・比較記事の一覧">
+  <section class="mb-8">
+    <h1 class="text-3xl font-bold text-white font-display">Blog</h1>
+    <p class="mt-2 text-zinc-400">すべての記事</p>
+  </section>
+
+  {/* Category filter */}
+  {categories.length > 0 && (
+    <div class="flex gap-2 flex-wrap mb-8">
+      <span class="inline-flex items-center rounded-full bg-amber-500/15 px-3 py-1 text-xs font-medium text-amber-400 ring-1 ring-inset ring-amber-500/20 cursor-default">
+        All
+      </span>
+      {categories.map((cat) => (
+        <span class="inline-flex items-center rounded-full bg-zinc-800 px-3 py-1 text-xs font-medium text-zinc-400 ring-1 ring-inset ring-zinc-700 cursor-default">
+          {cat}
+        </span>
+      ))}
+    </div>
+  )}
+
+  {posts.length === 0 && (
+    <p class="text-zinc-500 text-center py-16">
+      記事はまだありません。パイプライン実行後に表示されます。
+    </p>
+  )}
+
+  <div class="grid gap-6 sm:grid-cols-2">
+    {posts.map((post) => (
+      <ArticleCard
+        title={post.data.title}
+        description={post.data.description}
+        slug={post.data.urlSlug}
+        keyword={post.data.keyword}
+        articleType={post.data.articleType}
+        updatedAt={post.data.updatedAt}
+        rating={post.data.rating}
+        author={post.data.author}
+        tags={post.data.tags}
+      />
+    ))}
+  </div>
+</BaseLayout>

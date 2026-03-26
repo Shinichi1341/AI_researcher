@@ -9,7 +9,6 @@ export interface Props {
 const { title, description = "", ogImage, jsonLd } = Astro.props;
 const siteTitle = "Drunken Logic";
 const fullTitle = `${title} | ${siteTitle}`;
-const base = import.meta.env.BASE_URL;
 ---
 
 <html lang="ja">
@@ -22,6 +21,7 @@ const base = import.meta.env.BASE_URL;
     <!-- OGP -->
     <meta property="og:title" content={fullTitle} />
     <meta property="og:type" content="article" />
+    <meta property="og:site_name" content={siteTitle} />
     {description && <meta property="og:description" content={description} />}
     {ogImage && <meta property="og:image" content={ogImage} />}
     <meta name="twitter:card" content="summary_large_image" />
@@ -30,37 +30,55 @@ const base = import.meta.env.BASE_URL;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
 
-    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
 
     <!-- JSON-LD structured data -->
     {jsonLd && (
       <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     )}
+
+    <!-- WebSite schema for site-level SEO -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": siteTitle,
+      "url": Astro.site?.toString() ?? "",
+      "description": "飲んで、感じて、データで語る。正直レビュー × AI客観データ。",
+    })} />
   </head>
-  <body class="min-h-screen flex flex-col">
-    <header class="border-b border-zinc-200 bg-white">
-      <nav class="mx-auto max-w-5xl px-4 py-4 flex items-center justify-between">
-        <div>
-          <a href={base} class="text-xl font-bold text-zinc-900 no-underline tracking-tight">
-            🥃 {siteTitle}
-          </a>
-          <p class="mt-0.5 text-xs text-zinc-400">
-            Real reviews. Real data. No BS.
-          </p>
+  <body class="min-h-screen flex flex-col bg-zinc-950 text-zinc-100">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 border-b border-zinc-800/60 bg-zinc-950/80 backdrop-blur-lg">
+      <nav class="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2 no-underline group">
+          <span class="text-2xl">🥃</span>
+          <div>
+            <span class="text-lg font-bold text-white tracking-tight group-hover:text-amber-400 transition-colors">
+              {siteTitle}
+            </span>
+            <p class="text-[10px] text-zinc-500 leading-tight">
+              Real reviews. Real data. No BS.
+            </p>
+          </div>
+        </a>
+        <div class="flex items-center gap-6 text-sm">
+          <a href="/" class="text-zinc-400 hover:text-amber-400 transition-colors no-underline">Home</a>
+          <a href="/blog" class="text-zinc-400 hover:text-amber-400 transition-colors no-underline">Blog</a>
         </div>
       </nav>
     </header>
 
-    <main class="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
+    <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-10">
       <slot />
     </main>
 
-    <footer class="border-t border-zinc-200 bg-zinc-50 text-xs text-zinc-400">
-      <div class="mx-auto max-w-5xl px-4 py-6 space-y-2">
+    <footer class="border-t border-zinc-800/60 bg-zinc-950">
+      <div class="mx-auto max-w-6xl px-4 py-8 space-y-3 text-xs text-zinc-500">
         <p>
           当サイトはアフィリエイトプログラム（Amazon アソシエイト、楽天アフィリエイト）に
           参加しています。リンク経由の購入により、当サイトが紹介料を受け取る場合があります。
@@ -68,7 +86,10 @@ const base = import.meta.env.BASE_URL;
         <p>
           価格情報は記事更新時点のものです。最新の価格・在庫は各販売サイトでご確認ください。
         </p>
-        <p class="pt-2">&copy; {new Date().getFullYear()} {siteTitle}</p>
+        <div class="pt-3 flex items-center justify-between border-t border-zinc-800/40">
+          <p>&copy; {new Date().getFullYear()} {siteTitle}</p>
+          <p class="text-zinc-600">Powered by Astro + Vercel</p>
+        </div>
       </div>
     </footer>
   </body>

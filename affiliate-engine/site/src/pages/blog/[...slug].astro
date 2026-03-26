@@ -1,0 +1,175 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ScoreBadge from "../../components/ScoreBadge.astro";
+import TableOfContents from "../../components/TableOfContents.astro";
+import AffiliateButtons from "../../components/AffiliateButtons.astro";
+import AuthorBadge from "../../components/AuthorBadge.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { slug: post.data.urlSlug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+const {
+  title, description, keyword, updatedAt, createdAt,
+  urlSlug, articleType, rating, category, author,
+  rakutenUrl, amazonUrl, brand, price, tags,
+} = post.data;
+
+const isReview = articleType === "review";
+const siteUrl = Astro.site?.toString().replace(/\/$/, "") ?? "";
+const articleUrl = `${siteUrl}/blog/${urlSlug}/`;
+const ogImage = `${siteUrl}/ogp/${urlSlug}.png`;
+
+/* ── JSON-LD 構造化データ ── */
+let jsonLd: Record<string, unknown>;
+
+if (isReview && rating) {
+  // Review + Product (Google Rich Results で星が表示される)
+  jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Review",
+    "itemReviewed": {
+      "@type": "Product",
+      "name": brand ? `${brand} ${keyword}` : keyword,
+      "category": category || "お酒",
+      ...(brand && { "brand": { "@type": "Brand", "name": brand } }),
+      ...(price && { "offers": {
+        "@type": "Offer",
+        "priceCurrency": "JPY",
+        "availability": "https://schema.org/InStock",
+      }}),
+    },
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": rating,
+      "bestRating": 5,
+      "worstRating": 1,
+    },
+    "author": { "@type": "Person", "name": "Drunken Logic" },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Drunken Logic",
+      "url": siteUrl,
+    },
+    "name": title,
+    "description": description,
+    "datePublished": createdAt.toISOString(),
+    "dateModified": updatedAt.toISOString(),
+    "url": articleUrl,
+  };
+} else {
+  // Article schema for non-review pages
+  jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": title,
+    "description": description,
+    "author": { "@type": "Organization", "name": "Drunken Logic" },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Drunken Logic",
+      "url": siteUrl,
+    },
+    "datePublished": createdAt.toISOString(),
+    "dateModified": updatedAt.toISOString(),
+    "url": articleUrl,
+    ...(tags && tags.length > 0 && { "keywords": tags.join(", ") }),
+  };
+}
+
+const authorLabel: Record<string, string> = {
+  human: "主観レビュー",
+  ai: "AI 客観データ",
+  hybrid: "Drunken Logic",
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={ogImage}
+  jsonLd={jsonLd}
+>
+  <div class="relative">
+    <TableOfContents headings={headings} />
+
+    <article class="article-content max-w-3xl mx-auto">
+      {/* ── Hero Section ── */}
+      {isReview ? (
+        <header class="mb-10 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-800 border border-zinc-800 p-8 sm:p-10 relative overflow-hidden">
+          {/* Decorative glow */}
+          <div class="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+
+          <div class="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="inline-flex items-center rounded-full bg-amber-500/15 px-3 py-1 text-xs font-medium text-amber-400 ring-1 ring-inset ring-amber-500/20">
+                  {articleType === "review" ? "レビュー" : keyword}
+                </span>
+                <span class="inline-flex items-center rounded-full bg-zinc-800 px-3 py-1 text-xs font-medium text-zinc-400 ring-1 ring-inset ring-zinc-700">
+                  {authorLabel[author] ?? "AI"}
+                </span>
+              </div>
+              <h1 class="text-2xl sm:text-3xl font-bold leading-tight text-white font-display">
+                {title}
+              </h1>
+              <p class="mt-3 text-sm text-zinc-400">{keyword}</p>
+              {price && (
+                <p class="mt-1 text-sm text-amber-400/80">💰 参考価格: {price}</p>
+              )}
+              <time
+                class="mt-3 block text-xs text-zinc-600"
+                datetime={updatedAt.toISOString()}
+              >
+                最終更新: {updatedAt.toLocaleDateString("ja-JP")}
+              </time>
+            </div>
+            {rating && (
+              <div class="flex-shrink-0">
+                <ScoreBadge rating={rating} size="lg" />
+              </div>
+            )}
+          </div>
+        </header>
+      ) : (
+        <header class="mb-8">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="inline-flex items-center rounded-full bg-blue-500/15 px-3 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20">
+              {keyword}
+            </span>
+          </div>
+          <h1 class="text-2xl font-bold leading-tight text-white sm:text-3xl font-display">
+            {title}
+          </h1>
+          <time
+            class="mt-3 block text-sm text-zinc-500"
+            datetime={updatedAt.toISOString()}
+          >
+            最終更新: {updatedAt.toLocaleDateString("ja-JP")}
+          </time>
+        </header>
+      )}
+
+      {/* ── Author Badge ── */}
+      <AuthorBadge author={author} />
+
+      {/* ── Affiliate Buttons (top) ── */}
+      <AffiliateButtons rakutenUrl={rakutenUrl} amazonUrl={amazonUrl} />
+
+      {/* ── Article Body ── */}
+      <div class="prose prose-invert prose-zinc max-w-none">
+        <Content />
+      </div>
+
+      {/* ── Affiliate Buttons (bottom) ── */}
+      <AffiliateButtons rakutenUrl={rakutenUrl} amazonUrl={amazonUrl} />
+    </article>
+  </div>
+</BaseLayout>
