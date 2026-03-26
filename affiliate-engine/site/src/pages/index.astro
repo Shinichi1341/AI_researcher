@@ -25,7 +25,7 @@ const articles = (await getCollection("articles")).sort(
       <ArticleCard
         title={article.data.title}
         description={article.data.description}
-        slug={article.data.slug}
+        slug={article.data.urlSlug}
         keyword={article.data.keyword}
         articleType={article.data.articleType}
         updatedAt={article.data.updatedAt}

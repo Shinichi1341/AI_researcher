@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://your-username.github.io/affiliate-engine/sitemap-index.xml
+Sitemap: https://shinichi1341.github.io/AI_researcher/sitemap-index.xml

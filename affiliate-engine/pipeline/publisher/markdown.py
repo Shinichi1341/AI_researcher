@@ -23,7 +23,7 @@ def publish_article(article: Article, *, output_dir: Path) -> Path:
     frontmatter = {
         "title": article.meta.title,
         "description": article.meta.description,
-        "slug": article.meta.slug,
+        "urlSlug": article.meta.slug,
         "articleType": article.meta.article_type.value,
         "keyword": article.meta.keyword,
         "category": article.meta.category,

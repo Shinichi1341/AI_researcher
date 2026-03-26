@@ -1,9 +1,7 @@
 ---
-# Placeholder to ensure the articles directory exists for Astro content collections.
-# This file will be replaced by pipeline-generated articles.
 title: "サンプル記事"
 description: "これはサンプル記事です。パイプライン実行後に実際の記事が生成されます。"
-slug: "sample"
+urlSlug: "sample"
 articleType: "comparison"
 keyword: "サンプル"
 category: ""

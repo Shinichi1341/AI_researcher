@@ -1,11 +1,12 @@
 import { z, defineCollection } from "astro:content";
+import { glob } from "astro/loaders";
 
 const articles = defineCollection({
-  type: "content",
+  loader: glob({ pattern: "**/*.md", base: "./src/content/articles" }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    slug: z.string(),
+    urlSlug: z.string(),
     articleType: z.enum(["comparison", "spec_analysis", "price_watch", "review"]),
     keyword: z.string(),
     category: z.string().default(""),

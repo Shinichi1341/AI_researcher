@@ -8,6 +8,7 @@ export interface Props {
 const { title, description = "", ogImage } = Astro.props;
 const siteTitle = "スマート比較ナビ";
 const fullTitle = `${title} | ${siteTitle}`;
+const base = import.meta.env.BASE_URL;
 ---
 
 <html lang="ja">
@@ -24,13 +25,12 @@ const fullTitle = `${title} | ${siteTitle}`;
     {ogImage && <meta property="og:image" content={ogImage} />}
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="icon" type="image/svg+xml" href="/affiliate-engine/favicon.svg" />
-    <link rel="sitemap" href="/affiliate-engine/sitemap-index.xml" />
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
   </head>
   <body class="min-h-screen flex flex-col">
     <header class="border-b border-zinc-200 bg-white">
       <nav class="mx-auto max-w-4xl px-4 py-4">
-        <a href="/affiliate-engine/" class="text-xl font-bold text-brand-700 no-underline">
+        <a href={base} class="text-xl font-bold text-brand-700 no-underline">
           {siteTitle}
         </a>
         <p class="mt-1 text-xs text-zinc-500">

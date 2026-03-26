@@ -89,6 +89,6 @@ class TestPublisher:
             frontmatter = yaml.safe_load(parts[1])
 
             assert frontmatter["title"] == "YAML テスト"
-            assert frontmatter["slug"] == "yaml-test"
+            assert frontmatter["urlSlug"] == "yaml-test"
             assert frontmatter["articleType"] == "comparison"
             assert frontmatter["products"] == ["a", "b"]
