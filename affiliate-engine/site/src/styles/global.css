@@ -16,7 +16,7 @@
 @layer components {
   /* ── Comparison tables (dark theme) ── */
   .article-content table {
-    @apply w-full border-collapse text-sm my-6 rounded-xl overflow-hidden;
+    @apply w-full border-collapse text-sm my-8 rounded-xl overflow-hidden;
   }
 
   .article-content th,
@@ -36,11 +36,6 @@
     @apply bg-amber-500/5;
   }
 
-  /* ── Score bars rendered as Unicode blocks ── */
-  .article-content td:has(> text) {
-    font-family: monospace;
-  }
-
   /* ── Details/summary for specs ── */
   .article-content details {
     @apply my-2 rounded-xl border border-zinc-800 bg-zinc-900/50;
@@ -58,42 +53,64 @@
     @apply px-6 py-3;
   }
 
-  /* ── Headings ── */
+  /* ── Headings — clear visual hierarchy ── */
   .article-content h2 {
-    @apply text-xl font-bold text-white mt-12 mb-4 pb-3 border-b border-zinc-800;
+    @apply text-xl sm:text-2xl font-bold text-white mt-14 mb-5 pb-3 border-b border-zinc-800;
   }
 
   .article-content h3 {
-    @apply text-lg font-semibold text-zinc-200 mt-8 mb-3;
+    @apply text-lg font-semibold text-amber-400 mt-8 mb-3;
   }
 
   /* ── Human review section: warm handwritten-feel ── */
   .article-content .review-voice {
-    @apply bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20 rounded-2xl p-6 my-8 text-zinc-200;
+    @apply bg-gradient-to-br from-amber-500/10 to-orange-500/5
+           border border-amber-500/20 rounded-2xl p-5 sm:p-8 my-8 text-zinc-200;
   }
 
   .article-content .review-voice p {
-    @apply leading-relaxed;
+    @apply leading-loose text-[15px] sm:text-base my-3;
   }
 
-  /* ── Blockquotes (buying guide) ── */
+  .article-content .review-voice h3 {
+    @apply text-base sm:text-lg font-semibold text-amber-300 mt-6 mb-2 first:mt-0;
+  }
+
+  /* ── Blockquotes (buying guide / tips) ── */
   .article-content blockquote {
-    @apply border-l-4 border-amber-500/50 bg-zinc-900/50 rounded-r-xl pl-5 pr-4 py-4 my-6
-           text-sm text-zinc-400 italic;
+    @apply border-l-4 border-amber-500/50 bg-zinc-900/50 rounded-r-xl
+           pl-5 pr-4 py-4 my-8 text-sm text-zinc-400 not-italic leading-relaxed;
   }
 
-  /* ── Lists ── */
+  .article-content blockquote p {
+    @apply text-zinc-400 my-1;
+  }
+
+  /* ── Lists — readable with generous spacing ── */
   .article-content ul {
-    @apply my-4 space-y-1.5;
+    @apply my-5 space-y-2.5 pl-0;
   }
 
   .article-content ul li {
-    @apply pl-1 text-zinc-300;
+    @apply pl-1 text-zinc-300 leading-relaxed text-[15px] sm:text-base;
+  }
+
+  .article-content ol {
+    @apply my-5 space-y-2.5;
+  }
+
+  .article-content ol li {
+    @apply text-zinc-300 leading-relaxed text-[15px] sm:text-base;
+  }
+
+  /* ── Bold text highlight ── */
+  .article-content strong {
+    @apply text-white font-semibold;
   }
 
   /* ── Horizontal rules ── */
   .article-content hr {
-    @apply my-10 border-zinc-800;
+    @apply my-10 border-zinc-800/60;
   }
 
   /* ── Links ── */
@@ -102,9 +119,9 @@
            hover:decoration-amber-500 transition-colors;
   }
 
-  /* ── Paragraphs ── */
+  /* ── Paragraphs — generous line-height for mobile ── */
   .article-content p {
-    @apply text-zinc-300 leading-relaxed my-4;
+    @apply text-zinc-300 leading-loose text-[15px] sm:text-base my-4;
   }
 
   /* ── Code blocks ── */
@@ -118,5 +135,16 @@
 
   .article-content pre code {
     @apply bg-transparent px-0 py-0;
+  }
+
+  /* ── Emoji list items (✅ ❌ 🔥 etc) — no bullet ── */
+  .article-content ul li:has(> strong:first-child),
+  .article-content ul li:first-child {
+    list-style: none;
+  }
+
+  /* ── Disclaimer footer ── */
+  .article-content em:last-child {
+    @apply text-xs text-zinc-600 block mt-8;
   }
 }
