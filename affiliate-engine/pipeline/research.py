@@ -165,6 +165,81 @@ date: "{result.researched_at.isoformat()}"
 
 
 # ---------------------------------------------------------------------------
+# X (Twitter) post generation
+# ---------------------------------------------------------------------------
+X_POST_SYSTEM_PROMPT = """\
+あなたはバズるSNSマーケターです。
+与えられたリサーチ結果を元に、X（旧Twitter）投稿を3パターン作成してください。
+
+# 絶対ルール
+- 各投稿は140文字以内（厳守）
+- 日本語で書く
+- 誇張NG、リアル重視
+- 思わずクリックしたくなる構成にする
+- 「知らないと損」「正直」「結論」などのフックを入れる
+- 最後に「詳細はNoteで→」を自然に入れる
+- 絵文字は1〜2個まで
+"""
+
+X_POST_USER_PROMPT = """\
+# テーマ
+{theme}
+
+# リサーチ結果
+{research_md}
+
+# 出力形式（この通りに出力）
+
+## 投稿①（比較型）
+（ここに140文字以内の投稿文）
+
+## 投稿②（失敗談型）
+（ここに140文字以内の投稿文）
+
+## 投稿③（数値・事実型）
+（ここに140文字以内の投稿文）
+"""
+
+
+def generate_x_posts(
+    result: ResearchResult,
+    *,
+    gemini_api_key: str,
+    model_name: str = "gemini-2.5-flash",
+) -> str:
+    """Generate 3 X post drafts from research result."""
+    logger.info("Generating X posts for: %s", result.theme)
+
+    client = genai.Client(api_key=gemini_api_key)
+
+    response = client.models.generate_content(
+        model=model_name,
+        contents=X_POST_USER_PROMPT.format(
+            theme=result.theme,
+            research_md=result.raw_markdown,
+        ),
+        config=types.GenerateContentConfig(
+            system_instruction=X_POST_SYSTEM_PROMPT,
+            temperature=0.7,
+            max_output_tokens=2048,
+        ),
+    )
+
+    return response.text.strip()
+
+
+def save_x_posts(theme: str, posts_md: str, output_dir: Path) -> Path:
+    """Save X posts to a text file."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    slug = theme.replace(" ", "-").replace("　", "-")
+    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+    path = output_dir / f"{ts}_{slug}_x-posts.md"
+    path.write_text(posts_md, encoding="utf-8")
+    logger.info("Saved X posts: %s", path)
+    return path
+
+
+# ---------------------------------------------------------------------------
 # CLI entry point
 # ---------------------------------------------------------------------------
 def main() -> None:
@@ -199,6 +274,12 @@ def main() -> None:
         dest="print_output",
         help="結果を標準出力にも表示",
     )
+    parser.add_argument(
+        "--x-posts", "-x",
+        action="store_true",
+        dest="x_posts",
+        help="X投稿用テキストも生成",
+    )
     args = parser.parse_args()
 
     settings = get_settings()
@@ -224,6 +305,22 @@ def main() -> None:
 
     print(f"\n✅ リサーチ完了: {result.theme}")
     print(f"📄 保存先: {md_path}")
+
+    # X posts generation
+    if args.x_posts:
+        posts_md = generate_x_posts(
+            result,
+            gemini_api_key=settings.gemini_api_key,
+            model_name=args.model,
+        )
+        x_path = save_x_posts(result.theme, posts_md, output_dir)
+
+        print(f"\n{'─' * 50}")
+        print("🐦 X投稿案:")
+        print(f"{'─' * 50}")
+        print(posts_md)
+        print(f"{'─' * 50}")
+        print(f"📄 保存先: {x_path}")
 
 
 if __name__ == "__main__":
