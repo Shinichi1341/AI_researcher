@@ -41,7 +41,7 @@ def generate_seo_meta(
     article_type: str,
     *,
     gemini_api_key: str,
-    model_name: str = "gemini-2.0-flash",
+    model_name: str = "gemini-2.5-flash",
 ) -> dict[str, str]:
     """Generate SEO-optimized metadata using Gemini."""
     from datetime import datetime

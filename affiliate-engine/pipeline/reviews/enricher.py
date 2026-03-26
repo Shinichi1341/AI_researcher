@@ -65,7 +65,7 @@ def enrich_review(
     products: list[Product],
     *,
     gemini_api_key: str,
-    model_name: str = "gemini-2.0-flash",
+    model_name: str = "gemini-2.5-flash",
 ) -> Article:
     """Enrich a user's review memo into a full article."""
     product_data = _format_product_data(products)

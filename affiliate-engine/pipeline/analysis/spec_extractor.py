@@ -46,7 +46,7 @@ def extract_specs(
     product: Product,
     *,
     gemini_api_key: str,
-    model_name: str = "gemini-2.0-flash",
+    model_name: str = "gemini-2.5-flash",
 ) -> list[ProductSpec]:
     """Extract structured specs from a product using Gemini.
 

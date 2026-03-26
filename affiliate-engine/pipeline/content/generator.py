@@ -31,7 +31,7 @@ def generate_comparison_article(
     result: ComparisonResult,
     *,
     gemini_api_key: str,
-    model_name: str = "gemini-2.0-flash",
+    model_name: str = "gemini-2.5-flash",
 ) -> Article:
     """Generate a complete comparison article from analysis results."""
     # 1. Generate SEO metadata
