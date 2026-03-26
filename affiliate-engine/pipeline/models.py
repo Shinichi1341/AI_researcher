@@ -20,6 +20,7 @@ class ArticleType(str, Enum):
     COMPARISON = "comparison"
     SPEC_ANALYSIS = "spec_analysis"
     PRICE_WATCH = "price_watch"
+    REVIEW = "review"
 
 
 # ---------------------------------------------------------------------------

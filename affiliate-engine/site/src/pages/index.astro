@@ -10,9 +10,9 @@ const articles = (await getCollection("articles")).sort(
 
 <BaseLayout title="トップページ" description="データで比較する、賢い買い物ガイド">
   <section class="mb-10">
-    <h1 class="text-2xl font-bold text-zinc-900">最新の比較記事</h1>
+    <h1 class="text-2xl font-bold text-zinc-900">最新の記事</h1>
     <p class="mt-2 text-sm text-zinc-600">
-      商品スペック・価格・レビューをデータで徹底比較。独自のスコアリングで最適な一品を見つけましょう。
+      実体験レビューとデータ比較で、賢い買い物をサポート。
     </p>
   </section>
 
@@ -27,6 +27,7 @@ const articles = (await getCollection("articles")).sort(
         description={article.data.description}
         slug={article.data.slug}
         keyword={article.data.keyword}
+        articleType={article.data.articleType}
         updatedAt={article.data.updatedAt}
       />
     ))}

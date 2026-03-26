@@ -4,6 +4,10 @@ on:
   schedule:
     # Run daily at 06:00 JST (21:00 UTC)
     - cron: "0 21 * * *"
+  push:
+    branches: [develop, main]
+    paths:
+      - "reviews/**"
   workflow_dispatch:
 
 permissions:
