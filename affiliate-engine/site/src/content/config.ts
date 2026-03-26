@@ -11,6 +11,7 @@ const articles = defineCollection({
     keyword: z.string(),
     category: z.string().default(""),
     products: z.array(z.string()).default([]),
+    rating: z.number().optional(),
     createdAt: z.coerce.date(),
     updatedAt: z.coerce.date(),
   }),

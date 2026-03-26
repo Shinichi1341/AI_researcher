@@ -1,0 +1,66 @@
+---
+export interface Props {
+  rating: number;
+  size?: "sm" | "lg";
+}
+
+const { rating, size = "lg" } = Astro.props;
+const fullStars = Math.floor(rating);
+const hasHalf = rating - fullStars >= 0.5;
+const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
+
+// Color based on rating
+const getRingColor = (r: number) => {
+  if (r >= 4.5) return "text-amber-500";
+  if (r >= 3.5) return "text-amber-400";
+  if (r >= 2.5) return "text-amber-300";
+  return "text-zinc-400";
+};
+
+const ringColor = getRingColor(rating);
+const percentage = (rating / 5) * 100;
+const isLarge = size === "lg";
+---
+
+<div class={`flex flex-col items-center gap-1 ${isLarge ? "" : "scale-75 origin-center"}`}>
+  <!-- Circular gauge -->
+  <div class="relative">
+    <svg class={isLarge ? "w-24 h-24" : "w-14 h-14"} viewBox="0 0 100 100">
+      <!-- Background circle -->
+      <circle
+        cx="50" cy="50" r="42"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="8"
+        class="text-zinc-100"
+      />
+      <!-- Score arc -->
+      <circle
+        cx="50" cy="50" r="42"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="8"
+        class={ringColor}
+        stroke-linecap="round"
+        stroke-dasharray={`${percentage * 2.64} ${264 - percentage * 2.64}`}
+        stroke-dashoffset="66"
+        transform="rotate(-90 50 50)"
+      />
+    </svg>
+    <div class="absolute inset-0 flex items-center justify-center">
+      <span class={`font-bold text-zinc-900 ${isLarge ? "text-2xl" : "text-sm"}`}>
+        {rating.toFixed(1)}
+      </span>
+    </div>
+  </div>
+  <!-- Stars -->
+  <div class={`flex gap-0.5 ${isLarge ? "text-lg" : "text-xs"}`}>
+    {Array.from({ length: fullStars }).map(() => (
+      <span class="text-amber-400">★</span>
+    ))}
+    {hasHalf && <span class="text-amber-400">★</span>}
+    {Array.from({ length: emptyStars }).map(() => (
+      <span class="text-zinc-200">★</span>
+    ))}
+  </div>
+</div>

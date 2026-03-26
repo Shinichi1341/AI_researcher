@@ -3,10 +3,11 @@ export interface Props {
   title: string;
   description?: string;
   ogImage?: string;
+  jsonLd?: Record<string, unknown>;
 }
 
-const { title, description = "", ogImage } = Astro.props;
-const siteTitle = "スマート比較ナビ";
+const { title, description = "", ogImage, jsonLd } = Astro.props;
+const siteTitle = "Drunken Logic";
 const fullTitle = `${title} | ${siteTitle}`;
 const base = import.meta.env.BASE_URL;
 ---
@@ -25,26 +26,41 @@ const base = import.meta.env.BASE_URL;
     {ogImage && <meta property="og:image" content={ogImage} />}
     <meta name="twitter:card" content="summary_large_image" />
 
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
     <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+
+    <!-- JSON-LD structured data -->
+    {jsonLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    )}
   </head>
   <body class="min-h-screen flex flex-col">
     <header class="border-b border-zinc-200 bg-white">
-      <nav class="mx-auto max-w-4xl px-4 py-4">
-        <a href={base} class="text-xl font-bold text-brand-700 no-underline">
-          {siteTitle}
-        </a>
-        <p class="mt-1 text-xs text-zinc-500">
-          データで比較する、賢い買い物ガイド
-        </p>
+      <nav class="mx-auto max-w-5xl px-4 py-4 flex items-center justify-between">
+        <div>
+          <a href={base} class="text-xl font-bold text-zinc-900 no-underline tracking-tight">
+            🥃 {siteTitle}
+          </a>
+          <p class="mt-0.5 text-xs text-zinc-400">
+            Real reviews. Real data. No BS.
+          </p>
+        </div>
       </nav>
     </header>
 
-    <main class="mx-auto w-full max-w-4xl flex-1 px-4 py-8">
+    <main class="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
       <slot />
     </main>
 
-    <footer class="border-t border-zinc-200 bg-zinc-100 text-xs text-zinc-500">
-      <div class="mx-auto max-w-4xl px-4 py-6 space-y-2">
+    <footer class="border-t border-zinc-200 bg-zinc-50 text-xs text-zinc-400">
+      <div class="mx-auto max-w-5xl px-4 py-6 space-y-2">
         <p>
           当サイトはアフィリエイトプログラム（Amazon アソシエイト、楽天アフィリエイト）に
           参加しています。リンク経由の購入により、当サイトが紹介料を受け取る場合があります。

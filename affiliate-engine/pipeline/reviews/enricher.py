@@ -47,6 +47,7 @@ _ENRICH_PROMPT = """\
   "objective_data": [
     {{"label": "データ項目名", "value": "値（例: 容量700ml, アルコール度数47%）"}}
   ],
+  "general_evaluation": "世間一般の評価・評判を3〜5文で客観的に記述。受賞歴（IWSC, WWA等）、専門家やウイスキー愛好家コミュニティでの評価・立ち位置、同カテゴリの他銘柄との比較上の特徴、一般的に語られる味わいの印象など。出典が明確でない主張には推量表現（「〜とされています」「〜と評価されることが多い」等）を使用すること。",
   "pairing_suggestions": ["料理やおつまみの提案を2-3個"],
   "buying_guide": "購入時のアドバイス1〜2文（価格帯、どこが安いか等）"
 }}
@@ -54,6 +55,7 @@ _ENRICH_PROMPT = """\
 ## ルール
 - 著者のレビュー原文は変更してはいけない（記事では原文をそのまま掲載する）
 - introには著者の感想を含めない。客観的事実のみ
+- general_evaluationには著者の個人的感想を含めない。世間の評価のみ
 - 景品表示法を遵守。「最高」「No.1」等の根拠なき表現禁止
 - 推測は明記（「とされています」等）
 - objective_dataは検証可能な事実のみ
@@ -104,6 +106,7 @@ def enrich_review(
         keyword=memo.keyword,
         category=memo.category,
         products=[p.id for p in products],
+        rating=memo.rating,
         created_at=now,
         updated_at=now,
     )
@@ -165,8 +168,20 @@ def _build_review_article(
     if memo.rating:
         parts.append(f"**筆者評価: {'★' * int(memo.rating)}{'☆' * (5 - int(memo.rating))} ({memo.rating:.1f}/5.0)**")
         parts.append("")
+    parts.append('<div class="review-voice">')
+    parts.append("")
     parts.append(memo.body)
     parts.append("")
+    parts.append("</div>")
+    parts.append("")
+
+    # General evaluation from Gemini (world's opinion)
+    general_eval = enriched.get("general_evaluation", "")
+    if general_eval:
+        parts.append("## 一般的な評価")
+        parts.append("")
+        parts.append(general_eval)
+        parts.append("")
 
     # Pairing suggestions from Gemini
     pairings = enriched.get("pairing_suggestions", [])

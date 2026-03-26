@@ -8,28 +8,42 @@ const articles = (await getCollection("articles")).sort(
 );
 ---
 
-<BaseLayout title="トップページ" description="データで比較する、賢い買い物ガイド">
-  <section class="mb-10">
-    <h1 class="text-2xl font-bold text-zinc-900">最新の記事</h1>
-    <p class="mt-2 text-sm text-zinc-600">
-      実体験レビューとデータ比較で、賢い買い物をサポート。
+<BaseLayout title="トップページ" description="正直レビューとデータ比較で、賢い酒選びをサポート">
+  <!-- Hero -->
+  <section class="mb-12 text-center py-10">
+    <h1 class="text-4xl sm:text-5xl font-bold text-zinc-900 tracking-tight">
+      🥃 Drunken Logic
+    </h1>
+    <p class="mt-4 text-lg text-zinc-500 max-w-xl mx-auto">
+      飲んで、感じて、データで語る。<br class="sm:hidden" />
+      正直レビュー × AI客観データ。
     </p>
   </section>
 
-  {articles.length === 0 && (
-    <p class="text-zinc-500 text-center py-16">記事はまだありません。パイプライン実行後に表示されます。</p>
-  )}
+  <!-- Articles -->
+  <section>
+    <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-6">
+      Latest Reviews
+    </h2>
 
-  <div class="grid gap-4 sm:grid-cols-2">
-    {articles.map((article) => (
-      <ArticleCard
-        title={article.data.title}
-        description={article.data.description}
-        slug={article.data.urlSlug}
-        keyword={article.data.keyword}
-        articleType={article.data.articleType}
-        updatedAt={article.data.updatedAt}
-      />
-    ))}
-  </div>
+    {articles.length === 0 && (
+      <p class="text-zinc-400 text-center py-16">
+        記事はまだありません。パイプライン実行後に表示されます。
+      </p>
+    )}
+
+    <div class="grid gap-6 sm:grid-cols-2">
+      {articles.map((article) => (
+        <ArticleCard
+          title={article.data.title}
+          description={article.data.description}
+          slug={article.data.urlSlug}
+          keyword={article.data.keyword}
+          articleType={article.data.articleType}
+          updatedAt={article.data.updatedAt}
+          rating={article.data.rating}
+        />
+      ))}
+    </div>
+  </section>
 </BaseLayout>

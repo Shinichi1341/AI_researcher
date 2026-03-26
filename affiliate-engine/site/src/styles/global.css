@@ -9,41 +9,41 @@
 }
 
 @layer components {
-  /* Comparison tables */
+  /* ── Comparison tables ── */
   .article-content table {
-    @apply w-full border-collapse text-sm;
+    @apply w-full border-collapse text-sm my-6;
   }
 
   .article-content th,
   .article-content td {
-    @apply border border-zinc-200 px-3 py-2 text-left;
+    @apply border border-zinc-200 px-3 py-2.5 text-left;
   }
 
   .article-content th {
-    @apply bg-zinc-100 font-semibold;
+    @apply bg-zinc-100 font-semibold text-zinc-700;
   }
 
   .article-content tr:hover td {
-    @apply bg-blue-50/50;
+    @apply bg-amber-50/40;
   }
 
-  /* Score bars rendered as Unicode blocks */
+  /* ── Score bars rendered as Unicode blocks ── */
   .article-content td:has(> text) {
     font-family: monospace;
   }
 
-  /* Affiliate link buttons */
+  /* ── Affiliate link buttons ── */
   .article-content a[href*="amazon"],
   .article-content a[href*="rakuten"] {
-    @apply inline-block rounded bg-brand-500 px-4 py-2 text-sm font-medium text-white
-           no-underline transition hover:bg-brand-600;
+    @apply inline-block rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white
+           no-underline transition-all hover:bg-amber-600 hover:shadow-md;
     margin-right: 0.5rem;
     margin-top: 0.5rem;
   }
 
-  /* Details/summary for specs */
+  /* ── Details/summary for specs ── */
   .article-content details {
-    @apply my-2 rounded border border-zinc-200;
+    @apply my-2 rounded-lg border border-zinc-200;
   }
 
   .article-content summary {
@@ -56,5 +56,46 @@
 
   .article-content details ul {
     @apply px-6 py-2;
+  }
+
+  /* ── AI Objective Data sections: card style ── */
+  .article-content h2#基本データ + *,
+  .article-content h2#基本データ ~ table,
+  .article-content .ai-data-section {
+    /* Tables in 基本データ section get a card wrapper via their container */
+  }
+
+  /* Wrap AI sections (基本データ, 一般的な評価, おすすめの合わせ方) in card style */
+  .article-content h2 {
+    @apply text-xl font-bold text-zinc-900 mt-10 mb-4 pb-2 border-b border-zinc-200;
+  }
+
+  /* ── Human review section: warm handwritten-feel ── */
+  .article-content .review-voice {
+    @apply bg-amber-50 border-l-4 border-amber-400 rounded-r-xl p-6 my-8 text-zinc-800;
+  }
+
+  .article-content .review-voice p {
+    @apply leading-relaxed;
+  }
+
+  /* ── Blockquotes (buying guide) ── */
+  .article-content blockquote {
+    @apply border-l-4 border-brand-500 bg-brand-50 rounded-r-xl pl-5 pr-4 py-4 my-6
+           text-sm text-zinc-700 italic;
+  }
+
+  /* ── Lists ── */
+  .article-content ul {
+    @apply my-4 space-y-1;
+  }
+
+  .article-content ul li {
+    @apply pl-1;
+  }
+
+  /* ── Horizontal rules ── */
+  .article-content hr {
+    @apply my-8 border-zinc-200;
   }
 }

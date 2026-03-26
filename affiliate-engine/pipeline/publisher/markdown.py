@@ -32,6 +32,9 @@ def publish_article(article: Article, *, output_dir: Path) -> Path:
         "updatedAt": article.meta.updated_at.isoformat(),
     }
 
+    if article.meta.rating is not None:
+        frontmatter["rating"] = article.meta.rating
+
     yaml_str = yaml.dump(
         frontmatter,
         allow_unicode=True,

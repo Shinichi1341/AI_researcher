@@ -148,6 +148,7 @@ class ArticleMeta(BaseModel):
     keyword: str
     category: str = ""
     products: list[str] = Field(default_factory=list)
+    rating: float | None = None
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
 
