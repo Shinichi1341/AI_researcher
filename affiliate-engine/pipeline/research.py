@@ -240,6 +240,113 @@ def save_x_posts(theme: str, posts_md: str, output_dir: Path) -> Path:
 
 
 # ---------------------------------------------------------------------------
+# Note article generation
+# ---------------------------------------------------------------------------
+NOTE_SYSTEM_PROMPT = """\
+あなたはプロのレビューライター兼アフィリエイターです。
+与えられたリサーチ結果を元に、収益化を意識したNote記事を作成してください。
+
+# 絶対ルール
+- 2000〜3000文字（厳守）
+- 読みやすい日本語
+- 結論ファースト
+- 信頼性重視（体験ベース風に書く）
+- 1文は60文字以内
+- 2〜3文ごとに改行
+- 箇条書きを積極的に使う
+
+# アフィリエイト導線ルール
+- 自然に購入したくなる流れを作る
+- 押し売り感はNG
+- 「気になった方はチェックしてみてください」程度の誘導
+
+# トーン
+- 個人ブログ風
+- 正直レビュー
+- 「正直〜」「ぶっちゃけ〜」「結論から言うと〜」のようなフック
+"""
+
+NOTE_USER_PROMPT = """\
+# テーマ
+{theme}
+
+# リサーチ結果
+{research_md}
+
+# 記事構成（この見出し構成で書くこと）
+
+## タイトル
+（クリックしたくなるタイトル。30〜40文字。【】を使う）
+
+## 結論（最初に）
+（3行以内で結論を述べる。その後、箇条書き3つでポイント）
+
+## 実際のレビュー
+（体験ベース風に書く。第一印象・香り・味・飲み方など具体的に。
+ 主観と客観を分けて記述）
+
+## メリット・デメリット
+### メリット
+- （3〜4個）
+### デメリット
+- （2〜3個、正直に書く）
+
+## 他製品との比較
+（表形式で2製品と比較。違いを明確に）
+
+## こんな人におすすめ
+- （3〜4個、絵文字付き）
+
+## 注意点（ここ重要）
+（購入前に知っておくべきこと2〜3個。正直に書くことで信頼感UP）
+
+## まとめ
+（3行で結論。最後に自然な購入導線を1文だけ）
+
+---
+※ Noteの文字数制限のため、全体で2000〜3000文字に収めてください。
+"""
+
+
+def generate_note_article(
+    result: ResearchResult,
+    *,
+    gemini_api_key: str,
+    model_name: str = "gemini-2.5-flash",
+) -> str:
+    """Generate a Note article draft from research result."""
+    logger.info("Generating Note article for: %s", result.theme)
+
+    client = genai.Client(api_key=gemini_api_key)
+
+    response = client.models.generate_content(
+        model=model_name,
+        contents=NOTE_USER_PROMPT.format(
+            theme=result.theme,
+            research_md=result.raw_markdown,
+        ),
+        config=types.GenerateContentConfig(
+            system_instruction=NOTE_SYSTEM_PROMPT,
+            temperature=0.6,
+            max_output_tokens=8192,
+        ),
+    )
+
+    return response.text.strip()
+
+
+def save_note_article(theme: str, article_md: str, output_dir: Path) -> Path:
+    """Save Note article to a Markdown file."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    slug = theme.replace(" ", "-").replace("　", "-")
+    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+    path = output_dir / f"{ts}_{slug}_note.md"
+    path.write_text(article_md, encoding="utf-8")
+    logger.info("Saved Note article: %s", path)
+    return path
+
+
+# ---------------------------------------------------------------------------
 # CLI entry point
 # ---------------------------------------------------------------------------
 def main() -> None:
@@ -280,6 +387,18 @@ def main() -> None:
         dest="x_posts",
         help="X投稿用テキストも生成",
     )
+    parser.add_argument(
+        "--note", "-n",
+        action="store_true",
+        dest="note_article",
+        help="Note記事も生成",
+    )
+    parser.add_argument(
+        "--all", "-a",
+        action="store_true",
+        dest="generate_all",
+        help="X投稿 + Note記事を全て生成",
+    )
     args = parser.parse_args()
 
     settings = get_settings()
@@ -306,8 +425,11 @@ def main() -> None:
     print(f"\n✅ リサーチ完了: {result.theme}")
     print(f"📄 保存先: {md_path}")
 
+    do_x = args.x_posts or args.generate_all
+    do_note = args.note_article or args.generate_all
+
     # X posts generation
-    if args.x_posts:
+    if do_x:
         posts_md = generate_x_posts(
             result,
             gemini_api_key=settings.gemini_api_key,
@@ -321,6 +443,22 @@ def main() -> None:
         print(posts_md)
         print(f"{'─' * 50}")
         print(f"📄 保存先: {x_path}")
+
+    # Note article generation
+    if do_note:
+        note_md = generate_note_article(
+            result,
+            gemini_api_key=settings.gemini_api_key,
+            model_name=args.model,
+        )
+        note_path = save_note_article(result.theme, note_md, output_dir)
+
+        print(f"\n{'─' * 50}")
+        print("📝 Note記事:")
+        print(f"{'─' * 50}")
+        print(note_md)
+        print(f"{'─' * 50}")
+        print(f"📄 保存先: {note_path}")
 
 
 if __name__ == "__main__":
