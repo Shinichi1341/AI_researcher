@@ -1,11 +1,8 @@
-name: Deploy Site
+name: Deploy Site (DISABLED - moved to Vercel)
 
+# GitHub Pages デプロイは無効化済み。Vercel で運用中。
+# 手動実行したい場合は Actions タブから workflow_dispatch で起動可能。
 on:
-  push:
-    branches: [develop, main]
-    paths:
-      - "affiliate-engine/site/**"
-      - "affiliate-engine/data/**"
   workflow_dispatch:
 
 permissions:

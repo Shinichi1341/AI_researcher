@@ -25,6 +25,7 @@ dev = [
 [project.scripts]
 affiliate-engine = "pipeline.main:main"
 affiliate-research = "pipeline.research:main"
+affiliate-scheduler = "pipeline.scheduler:main"
 
 [build-system]
 requires = ["hatchling"]

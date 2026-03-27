@@ -2,8 +2,8 @@ name: Daily Pipeline
 
 on:
   schedule:
-    # Run daily at 06:00 JST (21:00 UTC)
-    - cron: "0 21 * * *"
+    # Run daily at 07:00 JST (22:00 UTC)
+    - cron: "0 22 * * *"
   push:
     branches: [develop, main]
     paths:
@@ -34,21 +34,20 @@ jobs:
       - name: Install dependencies
         run: pip install .
 
-      - name: Run pipeline
+      - name: Run scheduler (review or auto)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          AMAZON_ACCESS_KEY: ${{ secrets.AMAZON_ACCESS_KEY }}
-          AMAZON_SECRET_KEY: ${{ secrets.AMAZON_SECRET_KEY }}
-          AMAZON_PARTNER_TAG: ${{ secrets.AMAZON_PARTNER_TAG }}
-          RAKUTEN_APP_ID: ${{ secrets.RAKUTEN_APP_ID }}
-          RAKUTEN_AFFILIATE_ID: ${{ secrets.RAKUTEN_AFFILIATE_ID }}
-        run: python -m pipeline.main
+          NOTIFY_GMAIL_USER: ${{ secrets.NOTIFY_GMAIL_USER }}
+          NOTIFY_GMAIL_APP_PASSWORD: ${{ secrets.NOTIFY_GMAIL_APP_PASSWORD }}
+          NOTIFY_GMAIL_TO: ${{ secrets.NOTIFY_GMAIL_TO }}
+          NOTIFY_SLACK_WEBHOOK_URL: ${{ secrets.NOTIFY_SLACK_WEBHOOK_URL }}
+        run: python -m pipeline.scheduler
 
-      - name: Commit generated content
+      - name: Commit results
         working-directory: .
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add affiliate-engine/site/src/content/blog/ affiliate-engine/site/public/ogp/ affiliate-engine/data/
-          git diff --cached --quiet || git commit -m "chore: auto-generate daily content [$(date +%Y-%m-%d)]"
+          git add affiliate-engine/data/ affiliate-engine/reviews/
+          git diff --cached --quiet || git commit -m "chore: auto-generate content [$(date +%Y-%m-%d)]"
           git push
